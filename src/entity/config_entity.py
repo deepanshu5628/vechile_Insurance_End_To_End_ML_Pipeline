@@ -72,5 +72,5 @@ class ModelPusherConfg:
 
 @dataclass
 class PredictionPipelineConfig:
-    preprocessor_path:str=os.path.join(training_pipeline_config.artifact_dir,DATA_TRANSFORMATION_DIR_NAME,DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR,PREPROCSSING_OBJECT_FILE_NAME),
+    preprocessor_path:str=os.path.join(training_pipeline_config.artifact_dir,DATA_TRANSFORMATION_DIR_NAME,DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR,PREPROCSSING_OBJECT_FILE_NAME)
     model_path:str=os.path.join(PRODUCTION_MODEL_DIR_PATH,MODEL_FILE_NAME)

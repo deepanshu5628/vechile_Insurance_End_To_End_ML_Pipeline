@@ -13,4 +13,9 @@ imbalanced-learn #packange for handling imbalacned data set . it gives smoteenn
 pymongo[srv]==3.12
 pymongo
 certifi
+
+#for deployemnt
+fastapi
+uvicorn
+python-dotenv
 -e .

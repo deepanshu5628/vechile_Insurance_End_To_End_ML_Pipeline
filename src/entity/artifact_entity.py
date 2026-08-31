@@ -37,6 +37,7 @@ class ModelEvaluationArtifacts:
     production_model_dir_path:str
     production_model_file_path:str
     location_s3:bool
+    data_tranformation_object_file_path:str
 
 @dataclass 
 class ModelPusherArtifacts:

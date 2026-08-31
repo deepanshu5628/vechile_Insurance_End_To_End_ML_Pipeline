@@ -1,9 +1,12 @@
 import os
 from datetime import datetime
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # for mongodb connection
-DATABASE_NAME="vehicle_insurance_database"
-MONGODB_URI_KEY="mongodb+srv://d2810201_db_user:KRHu85jyWwlXanxa@clusterai.5di8rsk.mongodb.net/?appName=clusterai"
+DATABASE_NAME=os.getenv("DATABASE_NAME")
+MONGODB_URI_KEY=os.getenv("MONGODB_URI_KEY")
 
 
 PIPELINE_NAME:str=""
@@ -71,6 +74,10 @@ PRODUCTION_MODEL_DIR_PATH="production_s3"
 
 
 # aws related configs
-AWS_ACCESS_KEY_ID_ENV_KEY = "AWS_ACCESS_KEY_ID"
-AWS_SECRET_ACCESS_KEY_ENV_KEY = "AWS_SECRET_ACCESS_KEY"
-REGION_NAME = "us-east-1"
+AWS_ACCESS_KEY_ID=os.getenv("AWS_ACCESS_KEY_ID_ENV_KEY")
+AWS_SECRET_ACCESS_KEY=os.getenv("AWS_SECRET_ACCESS_KEY_ENV_KEY")
+REGION_NAME = os.getenv("REGION_NAME")
+
+# app congi
+APP_HOST = "0.0.0.0"
+APP_PORT = 5000

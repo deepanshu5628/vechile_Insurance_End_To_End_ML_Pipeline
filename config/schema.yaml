@@ -35,3 +35,6 @@ num_features:
 
 mm_columns:
   - Annual_Premium
+
+cat_columns:
+  - Vehicle_Age

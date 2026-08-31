@@ -12,7 +12,19 @@ from src.constants import SCHEMA_FILE_PATH,TARGET_COLUMN
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from imblearn.combine import SMOTEENN
-from sklearn.preprocessing import StandardScaler , MinMaxScaler
+from sklearn.preprocessing import StandardScaler , MinMaxScaler,OneHotEncoder, FunctionTransformer
+
+
+def map_gender_vechile_damage_column(df:pd.DataFrame)->pd.DataFrame:
+        try:
+            df=df.copy()
+            df["Gender"]=df["Gender"].map({"Male":0,"Female":1}).astype(int)
+            df["Vehicle_Damage"]=df["Vehicle_Damage"].map({"Yes":1,"No":0}).astype(int)
+            df=df.drop(columns=["id"])
+            return df
+        except Exception as e:
+            raise MyException(e,sys)
+
 class DataTransformation:
     def __init__(self,data_transformation_configs:DataTransformationConfig,data_ingestion_artifact:DataIngestionArtifacts,data_validation_artifact:DataValidationArtifacts):
         try:
@@ -29,60 +41,27 @@ class DataTransformation:
             # on num columns
             transformer=[
                 ("num_standard",StandardScaler(),self.schema_config["num_features"]),
-                ("min_max",MinMaxScaler(),self.schema_config["mm_columns"])
+                ("min_max",MinMaxScaler(),self.schema_config["mm_columns"]),
+                ("ohe",OneHotEncoder(drop="first",handle_unknown="ignore",sparse_output=False),self.schema_config["cat_columns"])
             ]
             preprocessor=ColumnTransformer(transformers=transformer,remainder="passthrough")
 
             # now creat the pipeline from it 
-            final_pipeline=Pipeline(steps=[("scaling",preprocessor)])
+            final_pipeline=Pipeline(steps=[
+                ("map_gender_vechile_damage_Col",FunctionTransformer(map_gender_vechile_damage_column)),
+                ("scaling",preprocessor)
+                ])
             logging.info("Final Pipeline Ready")
             return final_pipeline
         except Exception as e :
             raise MyException(e,sys)
-
-    def map_gender_column(self,df:pd.DataFrame)->pd.DataFrame:
-        try:
-            df["Gender"]=df["Gender"].map({"Male":0,"Female":1}).astype(int)
-            return df
-        except Exception as e:
-            raise MyException(e,sys)
-
-    def create_dummy_column(self,df:pd.DataFrame):
-        try:
-            df=pd.get_dummies(df,drop_first=True,dtype=int)
-            return df
-        except Exception as e :
-            raise MyException(e,sys)
-
-    def rename_column(self,df:pd.DataFrame):
-        try:
-            df=df.rename(columns={
-                "Vehicle_Age_< 1 Year": "Vehicle_Age_lt_1_Year",
-                "Vehicle_Age_> 2 Years": "Vehicle_Age_gt_2_Years"
-            })
-
-            for col in ["Vehicle_Damage_Yes"]:
-                if col in df.columns:
-                    df[col]=df[col].astype("int")
-            return df
-        except Exception as e:
-            raise MyException(e,sys)
-
-    def drop_id_column(self,df:pd.DataFrame):
-        try:
-            drop_col=self.schema_config["drop_columns"]
-            if drop_col in df.columns:
-                df=df.drop(drop_col,axis=1)
-            return df
-        except Exception as e:
-            raise MyException(e,sys)
-
+    
     def initiate_data_transformation(self)->DataTransformationArtifacts:
         try:
             logging.info("data transformation initiated")
             if not  self.data_validation_artifact.validation_status:
                 logging.error("validation status is false, feature store is not valid")
-                raise Exception("validation status is false, feature store is not valid")
+                raise MyException("validation status is false, feature store is not valid")
             # continue data transformation
             logging.info("data validaation is done. starting data_Transformation")
             train_df=read_csv_file(self.data_ingestion_artifact.train_file_path)
@@ -95,16 +74,6 @@ class DataTransformation:
             test_output_feature_df=test_df[TARGET_COLUMN]
             logging.info("x and y defined for both train & test df")
 
-            # apply custom transfoation on input of both train and test
-            train_input_feature_df=self.map_gender_column(df=train_input_feature_df)
-            train_input_feature_df=self.create_dummy_column(df=train_input_feature_df)
-            train_input_feature_df=self.rename_column(train_input_feature_df)
-            train_input_feature_df=self.drop_id_column(df=train_input_feature_df)
-
-            test_input_feature_df=self.map_gender_column(df=test_input_feature_df)
-            test_input_feature_df=self.create_dummy_column(df=test_input_feature_df)
-            test_input_feature_df=self.rename_column(test_input_feature_df)
-            test_input_feature_df=self.drop_id_column(df=test_input_feature_df)
             logging.info("Custom transformation's applied to train & test data")
 
             logging.info("starting dataTransformation")

@@ -69,8 +69,9 @@ class ModelEvaluationConfig:
 class ModelPusherConfg:
     bucket_name:str=MODEL_BUCKET_NAME
     s3_model_key_path:str=MODEL_FILE_NAME
+    s3_transformer_key_path:str=PREPROCSSING_OBJECT_FILE_NAME
 
 @dataclass
 class PredictionPipelineConfig:
-    preprocessor_path:str=os.path.join(training_pipeline_config.artifact_dir,DATA_TRANSFORMATION_DIR_NAME,DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR,PREPROCSSING_OBJECT_FILE_NAME)
+    preprocessor_path:str=os.path.join(PRODUCTION_MODEL_DIR_PATH,PREPROCSSING_OBJECT_FILE_NAME)
     model_path:str=os.path.join(PRODUCTION_MODEL_DIR_PATH,MODEL_FILE_NAME)

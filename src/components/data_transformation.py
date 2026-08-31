@@ -20,7 +20,8 @@ def map_gender_vechile_damage_column(df:pd.DataFrame)->pd.DataFrame:
             df=df.copy()
             df["Gender"]=df["Gender"].map({"Male":0,"Female":1}).astype(int)
             df["Vehicle_Damage"]=df["Vehicle_Damage"].map({"Yes":1,"No":0}).astype(int)
-            df=df.drop(columns=["id"])
+            if "id" in list(df.columns):
+                df=df.drop(columns=["id"])
             return df
         except Exception as e:
             raise MyException(e,sys)

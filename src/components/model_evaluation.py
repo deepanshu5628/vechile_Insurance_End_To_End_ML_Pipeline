@@ -62,7 +62,8 @@ class ModelEvaluation:
                 production_model_dir_path=self.model_evaluation_configs.production_model_dir_path,
                 production_model_file_path=os.path.join(self.model_evaluation_configs.production_model_dir_path,self.model_evaluation_configs.s3_model_key_path),
                 trained_model_path=self.model_trainer_artifact.trained_model_file_path,
-                improved_performance=improved_acc
+                improved_performance=improved_acc,
+                data_tranformation_object_file_path=self.data_tranformation_artifact.transformed_object_file_path
                 )
             return model_evaluation_artifact
         except Exception as e :
